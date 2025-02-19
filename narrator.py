@@ -24,8 +24,10 @@ def encode_image(image_path):
             if e.errno != errno.EACCES:
                 # Not a "file in use" error, re-raise
                 raise
-            # File is being written to, wait a bit and retry
-            time.sleep(0.1)
+            # File is being written to, wait a bit and retry with exponential backoff
+            delay = 0.1
+            time.sleep(delay)
+            delay = min(delay * 1.5, 1.0)  # Cap at 1 second
 
 
 def play_audio(text):
